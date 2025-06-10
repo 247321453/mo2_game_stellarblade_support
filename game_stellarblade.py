@@ -87,13 +87,13 @@ class UEGameModDataChecker(BasicModDataChecker):
 class StellarBladeGame(BasicGame):
     Name = "Stellar Blade Support Plugin"
     Author = "Haibao666"
-    Version = "1.0.0"
+    Version = "1.0.1"
 
     GameName = "Stellar Blade"
     GameShortName = "stellarblade"
     GameNexusName = "stellarblade"
     GameSteamId = 3489700
-    GameBinary = "SB/Binaries/Win64/SB-Win64-Shipping.exe"
+    GameBinary = "SB.exe"
     GameDataPath = "%GAME_PATH%"
     GameSavesDirectory = "%DOCUMENTS%/StellarBlade"
     GameSaveExtension = "sav"
