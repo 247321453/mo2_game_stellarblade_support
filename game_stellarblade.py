@@ -2,11 +2,12 @@ import math
 import fnmatch
 from pathlib import Path
 from typing import Iterable, List
+from PyQt6.QtCore import QDir
 
 import mobase
 
-from ..basic_game import BasicGame
-from ..basic_features import BasicModDataChecker, GlobPatterns
+from ..basic_game import BasicGame,BasicGameSaveGame
+from ..basic_features import BasicModDataChecker, GlobPatterns, BasicLocalSavegames
 from ..basic_features.utils import is_directory
 
 class UEGameModDataChecker(BasicModDataChecker):
@@ -83,6 +84,15 @@ class UEGameModDataChecker(BasicModDataChecker):
             self.fix_pak_path(filetree, filetree)
         return filetree
 
+class StellarBladeSaveGame(BasicGameSaveGame):
+    _filepath: Path
+
+    def __init__(self, filepath: Path):
+        super().__init__(filepath)
+        self._filepath = filepath
+        self.name = filepath.name()
+        self.elapsedTime = None
+
 
 class StellarBladeGame(BasicGame):
     Name = "Stellar Blade Support Plugin"
@@ -96,10 +106,23 @@ class StellarBladeGame(BasicGame):
     GameBinary = "SB/Binaries/Win64/SB-Win64-Shipping.exe"
     GameLauncher = "SB.exe"
     GameDataPath = "%GAME_PATH%"
-    GameSavesDirectory = "%DOCUMENTS%/StellarBlade"
+    # C:\Users\user\AppData\Local\SB\Saved\SaveGames
+    GameDocumentsDirectory = "%USERPROFILE%/AppData/Local/SB/Config/WindowsNoEditor"
+    GameSavesDirectory = "%USERPROFILE%/AppData/Local/SB/Saved/SaveGames"
     GameSaveExtension = "sav"
     
     def init(self, organizer: mobase.IOrganizer) -> bool:
         super().init(organizer)
         self._register_feature(UEGameModDataChecker("SB"))
+        self._register_feature(BasicLocalSavegames(self.savesDirectory()))
         return True
+    
+    def iniFiles(self):
+        return ["GameUserSettings.ini", "Engine.ini"]
+    
+    def listSaves(self, folder: QDir) -> List[mobase.ISaveGame]:
+        ext = self._mappings.savegameExtension.get()
+        return [
+            StellarBladeSaveGame(path)
+            for path in Path(folder.absolutePath()).glob(f"*.{ext}")
+        ]
