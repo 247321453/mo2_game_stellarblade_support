@@ -2,7 +2,7 @@ import math
 import fnmatch
 from pathlib import Path
 from typing import Iterable, List
-from PyQt6.QtCore import QDir
+from PyQt6.QtCore import QDir, QFileInfo
 
 import mobase
 
