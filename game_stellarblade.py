@@ -119,7 +119,15 @@ class StellarBladeGame(BasicGame):
     
     def iniFiles(self):
         return ["GameUserSettings.ini", "Engine.ini"]
-    
+
+    def executables(self):
+        return [
+            mobase.ExecutableInfo(
+                "Stellar Blade",
+                QFileInfo(self.gameDirectory().absoluteFilePath(self.binaryName())),
+            ).withArgument("SB -DistributionPlatform=Steam"),
+        ]
+        
     def listSaves(self, folder: QDir) -> List[mobase.ISaveGame]:
         ext = self._mappings.savegameExtension.get()
         return [
